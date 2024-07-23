@@ -1,0 +1,55 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+
+/*=============================================================================
+	ConvertVRSTexture.usf
+=============================================================================*/
+
+#include "/Engine/Private/Common.ush"
+
+// Supplied defines:
+// SHADING_RATE_1x1			- Shading rate of 1x1
+// SHADING_RATE_1x2			- Shading rate of 1x2
+// SHADING_RATE_2x1			- Shading rate of 2x1
+// SHADING_RATE_2x2			- Shading rate of 2x2
+// SHADING_RATE_2x4			- Shading rate of 2x4
+// SHADING_RATE_4x2			- Shading rate of 4x2
+// SHADING_RATE_4x4			- Shading rate of 4x4
+
+// SHADING_RATE_TILE_WIDTH	- Shading rate tile width
+// SHADING_RATE_TILE_HEIGHT - Shading rate tile height
+// THREADGROUP_SIZEX		- Threadgroup size (X)
+// THREADGROUP_SIZEY		- Threadgroup size (Y)
+
+Texture2D<uint> InputTexture;
+RWTexture2D<uint> OutputTexture;
+
+[numthreads(THREADGROUP_SIZEX, THREADGROUP_SIZEY, 1)]
+void GenerateVRSTexture(uint3 DispatchThreadId : SV_DispatchThreadID)
+{
+	const uint2 TexelCoord = DispatchThreadId.xy;
+	uint value = InputTexture[TexelCoord];
+	uint shadingRate = SHADING_RATE_4x4;
+	
+	if(value == 0x00)
+	{
+		shadingRate = SHADING_RATE_1x1; //RED
+	}
+	else if (value == 0x3DBF0000)
+	{
+		shadingRate = SHADING_RATE_4x2; //PURPLE
+	}
+	else if (value == 0x3DBA0000)
+	{
+		shadingRate = SHADING_RATE_2x2; //YELLOW
+	}
+	else if (value == 0x3DAD0000)
+	{
+		shadingRate = SHADING_RATE_2x4; //BLUE
+	}
+	else if (value == 0x3ECE0000)
+	{
+		shadingRate = SHADING_RATE_4x4; //PINK
+	}
+	
+	OutputTexture[TexelCoord] = shadingRate;
+}
