@@ -189,7 +189,7 @@ bool FImageVRSGenerator::IsSupportedByView(const FSceneView& View) const
 
 FVariableRateShadingImageManager::EVRSSourceType FImageVRSGenerator::GetType() const
 {
-	return FVariableRateShadingImageManager::EVRSSourceType::CustomImage;
+	return FVariableRateShadingImageManager::EVRSSourceType::None;
 }
 
 FRDGTextureRef FImageVRSGenerator::GetDebugImage(FRDGBuilder& GraphBuilder, const FViewInfo& ViewInfo, FVariableRateShadingImageManager::EVRSImageType ImageType, bool bGetSoftwareImage)
